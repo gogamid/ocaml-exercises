@@ -9,4 +9,7 @@ to load code into utop
 #use "filename.ml";;
 ```
 
-JuSAugN
+or run bash script with argument
+```
+./run.sh '#use "exercises3-14.ml";;'
+```
