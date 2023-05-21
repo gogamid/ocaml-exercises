@@ -15,6 +15,7 @@ let rec concat = function
   | h :: t -> h ^ concat t
 
 let _ = assert (concat ["a";"b";"c";"d";"e"] = "abcde")
+(*  combine product and concat with whatever xs base op*)
 
 (* patterns *)
 let isFirstBigred = function
@@ -60,3 +61,10 @@ let containsZero (l: int list) : bool =
 
 let _ = assert (containsZero [1;2;3;4;5] = false)
 
+(* take drop *)
+let rec take n =
+    if n <= 0 then []
+    else function
+      | [] -> []
+      | h :: t -> h :: take (n-1) t
+let rec drop
