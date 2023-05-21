@@ -41,8 +41,91 @@ let _ = assert (drop 1 longList = 1 -- 1_000_000)
 let _ = assert (drop 3 [1;2;3]= [])
 
 (* unimodal *)
+let rec isMonDec = function
+    | [] | [_] -> true
+    | h1 :: (h2 :: t2 as t) ->
+        h1 >= h2 && isMonDec t
+
+let rec isMonIncThenDec = function
+    | [] | [_] -> true
+    | h1 :: (h2 :: t2 as t) as l ->
+        if h1<=h2 then isMonIncThenDec t else isMonDec l
+
+let isUniModal l =
+    isMonIncThenDec l
+
+
+let _ = assert (isUniModal [1;2;3;4;5;4;3;2;1])
+let _ = assert (isUniModal [1;2;3;4;5;6;7;8;9])
+
 (* safe_hd and tl *)
+let safe_hd = function
+    | [] -> None
+    | h :: _ -> Some h
+
+let _ = assert (safe_hd [1;2;3] = Some 1)
+let _ = assert (safe_hd [] = None)
+
+let safe_tl = function
+    | [] -> None
+    | _ :: t -> Some t
+
+let _ = assert (safe_tl [1;2;3] = Some [2;3])
+let _ = assert (safe_tl [] = None)
+
 (* quadrant *)
+type quad = I | II | III | IV
+type sign = Neg | Zero | Pos
+
+let sign (x:int) : sign =
+    if x < 0 then Neg
+    else if x = 0 then Zero
+    else Pos
+
+let quadrant : int*int -> quad option = fun (x,y) ->
+  match sign x, sign y with
+    | Pos, Pos -> Some I
+    | Neg, Pos -> Some II
+    | Neg, Neg -> Some III
+    | Pos, Neg -> Some IV
+    | _ -> None
+
+let _ = assert (quadrant (1,1) = Some I)
+let _ = assert (quadrant (-1,1) = Some II)
+let _ = assert (quadrant (-1,-1) = Some III)
+let _ = assert (quadrant (1,-1) = Some IV)
+let _ = assert (quadrant (0,0) = None)
+
 (* depth *)
+type 'a tree = Leaf | Node of 'a tree * 'a * 'a tree
+let depth t =
+    let rec inner t d =
+        match t with
+        | Leaf -> d
+        | Node (l, _, r) -> max (inner l (d+1)) (inner r (d+1))
+    in
+    inner t 0
+
+let _ = assert (depth (Node (Leaf, 1, Leaf)) = 1)
+let _ = assert (depth (Node (Node (Leaf, 1, Leaf), 2, Leaf)) = 2)
 (* shape *)
+let rec shape t1 t2 =
+    match t1, t2 with
+    | Leaf, Leaf -> true
+    | Node (l1, _, r1), Node (l2, _, r2) -> shape l1 l2 && shape r1 r2
+    | _ -> false
+
+let _ = assert (shape (Node (Leaf, 1, Leaf)) (Node (Leaf, 2, Leaf)))
+let _ = assert (not (shape (Node (Leaf, 1, Leaf)) (Node (Node (Leaf, 2, Leaf), 1, Leaf))))
+
 (* is_bst *)
+let is_bst t =
+    let rec inner t min max =
+        match t with
+        | Leaf -> true
+        | Node (l, v, r) -> v >= min && v <= max && inner l min v && inner r v max
+    in
+    inner t min_int max_int
+
+let _ = assert (is_bst (Node (Node (Leaf, 1, Leaf), 2, Leaf)))
+let _ = assert (not (is_bst (Node (Node (Leaf, 3, Leaf), 2, Leaf))))
