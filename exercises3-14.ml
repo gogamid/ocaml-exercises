@@ -108,6 +108,7 @@ let depth t =
 
 let _ = assert (depth (Node (Leaf, 1, Leaf)) = 1)
 let _ = assert (depth (Node (Node (Leaf, 1, Leaf), 2, Leaf)) = 2)
+
 (* shape *)
 let rec shape t1 t2 =
     match t1, t2 with
@@ -117,15 +118,3 @@ let rec shape t1 t2 =
 
 let _ = assert (shape (Node (Leaf, 1, Leaf)) (Node (Leaf, 2, Leaf)))
 let _ = assert (not (shape (Node (Leaf, 1, Leaf)) (Node (Node (Leaf, 2, Leaf), 1, Leaf))))
-
-(* is_bst *)
-let is_bst t =
-    let rec inner t min max =
-        match t with
-        | Leaf -> true
-        | Node (l, v, r) -> v >= min && v <= max && inner l min v && inner r v max
-    in
-    inner t min_int max_int
-
-let _ = assert (is_bst (Node (Node (Leaf, 1, Leaf), 2, Leaf)))
-let _ = assert (not (is_bst (Node (Node (Leaf, 3, Leaf), 2, Leaf))))
