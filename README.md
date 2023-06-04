@@ -11,5 +11,5 @@ to load code into utop
 
 or run bash script with argument
 ```
-./run.sh '#use "exercises3-14.ml";;'
+./run.sh file.ml
 ```
